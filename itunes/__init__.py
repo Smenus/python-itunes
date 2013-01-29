@@ -263,6 +263,7 @@ class Item(object):
         # Item information
         self._set_genre(json)
         self._set_release(json)
+        self._set_release_raw(json)
         self._set_country(json)
         self._set_artwork(json)
         self._set_url(json)
@@ -274,6 +275,11 @@ class Item(object):
         self.release_date = None
         if json.has_key('releaseDate') and json['releaseDate']:
             self.release_date = json['releaseDate'].split('T')[0]
+
+    def _set_release_raw(self, json):
+        self.release_date_raw = None
+        if json.has_key('releaseDate') and json['releaseDate']:
+            self.release_date_raw = json['releaseDate']
 
     def _set_country(self, json):
         self.country_store = json.get('country', None)
@@ -340,6 +346,10 @@ class Item(object):
     def get_release_date(self):
         """ Returns the release date of the Item """
         return self.release_date
+
+    def get_release_date_raw(self):
+        """ Returns the raw release date of the Item """
+        return self.release_date_raw
 
     def get_artwork(self):
         """ Returns the artwork (a dict) of the item """
@@ -576,6 +586,7 @@ class TVEpisode(Track):
         self._set_content_rating(json)
         self._set_short_description(json)
         self._set_long_description(json)
+        self._set_explicitness(json)
 
     def _set_content_rating(self, json):
         self.content_rating = json.get('contentAdvisoryRating', None)
@@ -586,6 +597,9 @@ class TVEpisode(Track):
     def _set_long_description(self, json):
         self.long_description = json.get('longDescription', None)
 
+    def _set_explicitness(self, json):
+        self.explicitness = json.get('trackExplicitness', None)
+
     # GETTERs
     def get_content_rating(self):
         return self.content_rating
@@ -593,6 +607,8 @@ class TVEpisode(Track):
         return self.short_description
     def get_long_description(self):
         return self.long_description
+    def get_explicitness(self):
+        return self.explicitness
 
 # CACHE
 def enable_caching(cache_dir = None):
