@@ -165,7 +165,15 @@ class _BaseObject(object):
                 item = Album(id)
             elif type == 'track':
                 id = json['trackId']
-                item = Track(id)
+
+                if json.has_key('kind'):
+                    kind = json['kind']
+                    if kind == 'tv-episode':
+                        item = TVEpisode(id)
+                    else:
+                        item = Track(id)
+                else:
+                    item = Track(id)
             elif type == 'audiobook':
                 id = json['collectionId']
                 item = Audiobook(id)
@@ -490,7 +498,7 @@ class Audiobook(Album):
 
 # Software
 class Software(Track):
-    """ Audiobook class """
+    """ Software class """
     def __init__(self, id):
         Track.__init__(self, id)
 
@@ -557,6 +565,35 @@ class Software(Track):
     def get_num_ratings(self):
         return self.num_ratings
 
+# TVEpisode
+class TVEpisode(Track):
+    """ TVEpisode class """
+    def __init__(self, id):
+        Track.__init__(self, id)
+
+    def _set(self, json):
+        super(TVEpisode, self)._set(json)
+        self._set_content_rating(json)
+        self._set_short_description(json)
+        self._set_long_description(json)
+
+    def _set_content_rating(self, json):
+        self.content_rating = json.get('contentAdvisoryRating', None)
+
+    def _set_short_description(self, json):
+        self.short_description = json.get('shortDescription', None)
+
+    def _set_long_description(self, json):
+        self.long_description = json.get('longDescription', None)
+
+    # GETTERs
+    def get_content_rating(self):
+        return self.content_rating
+    def get_short_description(self):
+        return self.short_description
+    def get_long_description(self):
+        return self.long_description
+
 # CACHE
 def enable_caching(cache_dir = None):
     global __cache_dir
@@ -611,6 +648,10 @@ def search_artist(query, limit=100, offset=0, order=None, store=COUNTRY):
 def search_app(query, limit=100, offset=0, order=None, store=COUNTRY):
     return Search(query=query, media='software', limit=limit,
                   offset=offset, order=order, country=store).get()
+
+def search_episode(query, limit=100, offset=0, order=None, store=COUNTRY):
+    return Search(query=query, media='tvShow', entity='tvEpisode',
+                  limit=limit, offset=offset, order=order, country=store).get()
 
 def search(query, media='all', limit=100, offset=0, order=None, store=COUNTRY):
     return Search(query=query, media=media, limit=limit,
