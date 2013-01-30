@@ -669,6 +669,10 @@ def search_episode(query, limit=100, offset=0, order=None, store=COUNTRY):
     return Search(query=query, media='tvShow', entity='tvEpisode',
                   limit=limit, offset=offset, order=order, country=store).get()
 
+def search_season(query, limit=100, offset=0, order=None, store=COUNTRY):
+    return Search(query=query, media='tvShow', entity='tvSeason',
+                  limit=limit, offset=offset, order=order, country=store).get()
+
 def search(query, media='all', limit=100, offset=0, order=None, store=COUNTRY):
     return Search(query=query, media=media, limit=limit,
                   offset=offset, order=order, country=store).get()
